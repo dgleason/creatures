@@ -1,0 +1,79 @@
+from django.db import models
+from django.shortcuts import get_object_or_404
+
+class Creature(models.Model):
+    name = models.CharField(max_length=20)
+    evp_earned = models.IntegerField(default=0)
+    evp_spent = models.IntegerField(default=0)
+    atk_power = models.IntegerField(default=6)
+    armor = models.IntegerField(default=0)
+    constitution = models.IntegerField(default=0)
+    crit_bonus = models.IntegerField(default=0)
+    health = models.IntegerField(default=45)
+    dodge = models.IntegerField(default=0)
+    accuracy = models.IntegerField(default=0)
+    evolutions = models.ManyToManyField('Evolution', blank=True)
+    ability1 = models.ForeignKey('Ability', related_name='ability1', blank=True, null=True)
+    ability2 = models.ForeignKey('Ability', related_name='ability2', blank=True, null=True)
+    ability3 = models.ForeignKey('Ability', related_name='ability3', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+# This updates a creature based on their evolutions, since we don't store evolved stats in the database
+    def evolve(creature):
+        creature.atk_power = 0
+        creature.armor = 0
+        creature.constitution = 0
+        creature.crit_bonus = 0
+        creature.health = 0
+        creature.dodge = 0
+        creature.accuracy = 0
+        for e in creature.evolutions.all():
+            creature.atk_power = creature.atk_power + e.atk_power 
+            creature.armor = creature.armor + e.armor
+            creature.constitution = creature.constitution + e.constitution
+            creature.crit_bonus = creature.crit_bonus + e.crit_bonus
+            creature.health = creature.health + e.health
+            creature.dodge = creature.dodge + e.dodge
+            creature.accuracy = creature.accuracy + e.accuracy
+#        if get_object_or_404(Evolution, name="Venom Sacs") in creature.evolutions.all():
+#            creature.ability2 = (get_object_or_404(Ability, name="spit"))
+#            creature.save(update_fields=['ability2'])
+
+        return creature
+
+
+class Evolution(models.Model):
+    name = models.CharField(max_length=100)
+    cost = models.IntegerField(default=0)
+    desc = models.CharField(max_length=2000)
+    atk_power = models.IntegerField(default=0)
+    armor = models.IntegerField(default=0)
+    constitution = models.IntegerField(default=0)
+    crit_bonus = models.IntegerField(default=0)
+    health = models.IntegerField(default=0)
+    dodge = models.IntegerField(default=0)
+    accuracy = models.IntegerField(default=0)
+    exclusive_with = models.ManyToManyField('self', blank=True)
+    requires = models.ManyToManyField('self', blank=True)
+    req_evp_spent = models.IntegerField(default=0)
+        
+    def __unicode__(self):
+        return self.name
+
+class Ability(models.Model):
+    name = models.CharField(max_length=100)
+    desc = models.CharField(max_length=2000)
+    combat_string = models.CharField(max_length=1000)
+    damage_choices = (
+        ('Physical', 'Physical'),
+        ('Elemental', 'Elemental'),
+        ('Non-damaging', 'Non-damaging'),
+        )
+    damage_type = models.CharField(max_length=100, choices=damage_choices, blank=False, default='Physical')
+    ability_slot = models.IntegerField(default=1)
+    # Maybe ManyToMany to an 'Effect' class for buffs/debuffs
+        
+    def __unicode__(self):
+        return self.name

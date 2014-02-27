@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+<script>
+$(document).ready(function () {
+    $("select").change(function () {
+        var $this = $(this);
+        var prevVal = $this.data("prev");
+        var otherSelects = $("select").not(this);
+        var val = $(this).find('option:selected').val();
+
+        if (prevVal) {
+            otherSelects.find("option[value=" + prevVal + "]").attr('disabled', false);
+        }
+
+        $this.data("prev", $this.val());
+        if (!val) return;
+        otherSelects.find("option[value=" + $(this).val() + "]").attr('disabled', true);
+    });
+});
+</script>
+
+<script>
+
+</script>
+
+
+{% endblock %}
+
+{% block content %}
+<div id="content_wrap" style="width: 90%; padding: 30px; float: left;">
+
+<div id="team" style= "float: left;">
+<strong>Combat Team</strong>
+<form action="{% url 'creatures:fight' %}" method="post">
+{% csrf_token %}
+
+<select name="team_1" id="team_1" class="selbox">
+<option value=""></option>
+{% for creature in your_creatures_list %}
+<option {% if creature == team.0 %}selected = "selected" {% endif %}value="{{ creature.id }}">{{ creature.name }}</option>
+{% endfor %}
+</select><br>
+<select name="team_2" id="team_2" class="selbox">
+<option value=""></option>
+{% for creature in your_creatures_list %}
+<option {% if creature == team.1 %}selected = "selected" {% endif %}value="{{ creature.id }}">{{ creature.name }}</option>
+{% endfor %}
+</select><br>
+<select name="team_3" id="team_3" class="selbox">
+<option value=""></option>
+{% for creature in your_creatures_list %}
+<option {% if creature == team.2 %}selected = "selected" {% endif %}value="{{ creature.id }}">{{ creature.name }}</option>
+{% endfor %}
+</select><br>
+<br>
+<strong>Select Enemy</strong>
+<br>
+{% for enemy in enemies_list %}
+<input type="radio" name="enemy" id="{{ enemy.name }}" value="{{ enemy.id }}" />
+<label for="{{ enemy.name }}"><a href="{% url 'creatures:creature_detail' enemy.id %}">{{ enemy.name }}</a></label><br>
+{% endfor %}
+
+<!--
+<select name="enemy" id="enemy" class="selbox">
+{% for enemy in enemies_list %}
+<option value="{{ enemy.id }}">{{ enemy.name }}</option> 
+{% endfor %}
+</select> (details)<br>
+-->
+
+
+<p><input type="submit" value="Send Team To Battle" style="background: orange;" /></p>
+</form>
+</div>
+
+<div id="stable" style="float: right;">
+<strong>Your Creatures:</strong>
+    <ol>
+    {% for creature in your_creatures_list %}
+        <li>
+        <a href="{% url 'creatures:creature_detail' creature.id %}">{{ creature.name }}</a>
+        <a href="{% url 'creatures:creature_delete' creature.id %}">(delete)</a>
+        </li>
+    {% endfor %}
+    {% if empty_slot %}
+        <li><a href="{% url 'creatures:create' %}">Create a new creature</a></li>
+    {% endif %}
+    </ul>
+</div>
+
+</div>
+{% endblock %}

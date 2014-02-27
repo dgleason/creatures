@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if user.is_anonymous %}
+<a href="{% url 'accounts:register' %}">Register</a> or <a href="{% url 'accounts:django.contrib.auth.views.login' %}">login</a> to visit your <a href="{% url 'creatures:index' %}">Creatures</a>.
+{% endif %}
+{% if not user.is_anonymous %}
+View your <a href="{% url 'creatures:index' %}">Creatures</a>.
+{% endif %}
+{% endblock %}

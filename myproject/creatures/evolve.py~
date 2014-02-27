@@ -1,0 +1,14 @@
+# evolve.py
+from creatures.models import Creature, Ability, Evolution
+
+def allowed_evos(creature):
+    available_evolutions = []
+    for e in Evolution.objects.filter(cost__gt=0): # Not a free monster evo
+        # Not already purchased
+        if (not e in creature.evolutions.all() and
+        # All requirements of the evolution are already owned
+        set(e.requires.all()).issubset(set(creature.evolutions.all())) and
+        # No owned evolutions are exclusive with this one
+        not [i for i in creature.evolutions.all() if i in e.exclusive_with.all()]
+        ):
+            available_evolutions.append(e)

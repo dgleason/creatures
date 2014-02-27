@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<html>
+    <head>
+
+    <script>
+    {% block scripts %}    
+    {% endblock %}
+    </script>
+    {% block head %}    
+    {% endblock %}
+
+
+    </head>
+
+    <body>
+        <div style="text-align: right; height: 50px; width: 100%;">
+            {{ user }}
+            {% if user.is_anonymous %}
+            <a href="{% url 'accounts:django.contrib.auth.views.login' %}">Login</a> | 
+            <a href="{% url 'accounts:register' %}">Register</a>
+            
+            {% else %}
+            {{ user.name }} <a href="{% url 'accounts:django.contrib.auth.views.logout' %}">Logout</a>
+            {% endif %}
+
+        </div>
+        {% block content %}
+        {% endblock %}
+
+    
+    </body>
+</html>
+

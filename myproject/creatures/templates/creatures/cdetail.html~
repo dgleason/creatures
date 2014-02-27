@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+* {
+    font-size: 10pt;
+}
+
+span:hover {
+    background-color:white !important;
+    color:black !important;
+    }
+
+</style>
+
+
+<h1>{{ creature }}</h1>
+<p><strong>Combat Stats:</strong><br>
+{{ creature.health }} Health Points.<br>
+{{ creature.atk_power }} Attack Power.<br>
+{{ creature.crit_bonus }} Critical Bonus (extra damage on critical hits).<br>
+{{ creature.armor }} Armor (reduced damage from physical attacks).<br>
+{{ creature.constitution }} Constitution (reduced damage from elemental attacks).<br>
+{{ creature.dodge }} Dodge (damage taken reduced on dodge).<br>
+{{ creature.accuracy }} Accuracy (enemy dodge negated).<br>
+</p>
+
+<p><strong>Combat Abilities:</strong><br>
+{% if creature.ability1 %}<em>{{ creature.ability1 }}</em> - {{ creature.ability1.desc }}<br>{% endif %}
+{% if creature.ability2 %}<em>{{ creature.ability2 }}</em> - {{ creature.ability2.desc }}<br>{% endif %}
+{% if creature.ability3 %}<em>{{ creature.ability3 }}</em> - {{ creature.ability3.desc }}<br>{% endif %}
+</p>
+
+
+<p><strong>Active Evolutions:</strong><br>
+<ul>
+{% for e in creature.evolutions.all %}
+    <li><strong>{{ e.name }}</strong><br>
+    {{ e.desc }}<br>
+    {% if e.atk_power %}Attack Power: +{{ e.atk_power }},   {% endif %}
+    {% if e.crit_bonus %}Crit Bonus: +{{ e.crit_bonus }},   {% endif %}
+    {% if e.accuracy %}Accuracy: +{{ e.accuracy }},   {% endif %}
+    {% if e.health %}Health: +{{ e.health }},   {% endif %}
+    {% if e.armor %}Armor: +{{ e.armor }},   {% endif %}
+    {% if e.constitution %}Constitution: +{{ e.constitution }},   {% endif %}
+    {% if e.dodge %}Dodge: +{{ e.dodge }},   {% endif %}
+    </li><br>
+{% endfor %}
+</ul>
+</p>
+
+<p><strong>Available Evolutions:</strong><br>
+{{ evp_left }} Evolution Points (EVP) available.<br>
+
+{% for e in available_evolutions %}
+<div style="border: 1px solid gray; float: left; width: 600px; border-radius: 5px; padding: 5px; margin: 5px; background: ivory;">
+<strong>{{ e.name }}</strong> (cost: {{ e.cost }} EVP) 
+
+    <a style="text-decoration: none;" href="{% url 'creatures:buy_evo' creature.id e.id %}"><span class="buybut" style="background: orange; padding: 1px; border-radius: 2px; color: white; border: 1px solid darkorange; font-size: 9pt;"><strong>BUY</strong></a><br>
+    {{ e.desc }}<br>
+    {% if e.atk_power %}Attack Power: +{{ e.atk_power }},   {% endif %}
+    {% if e.crit_bonus %}Crit Bonus: +{{ e.crit_bonus }},   {% endif %}
+    {% if e.accuracy %}Accuracy: +{{ e.accuracy }},   {% endif %}
+    {% if e.health %}Health: +{{ e.health }},   {% endif %}
+    {% if e.armor %}Armor: +{{ e.armor }},   {% endif %}
+    {% if e.constitution %}Constitution: +{{ e.constitution }},   {% endif %}
+    {% if e.dodge %}Dodge: +{{ e.dodge }},   {% endif %}
+    <br><br>
+    {% if e.requires.all %}<em>Requires:</em> {% for r in e.requires.all %}{{ r.name }}{% endfor %}<br>{% endif %}
+    {% if e.exclusive_with.all %}<em>Exclusive with:</em> {% for r in e.exclusive_with.all %}{{ r.name }}{% endfor %}{% endif %}
+</div><br>
+
+{% endfor %}
+
+{% if creature.evp_earned > 0 %}
+
+{% endif %}
+
+
+{% endblock %}

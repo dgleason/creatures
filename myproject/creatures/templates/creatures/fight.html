@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div style="float: left; width: 40%">
+{% if current %}
+<strong>{{ current.name }}</strong> ({{ current.health_left }}/{{ current.health }} HP)<br>
+{% endif %}
+
+<form action="{% url 'creatures:fight' %}" method="post">
+{% csrf_token %}
+
+{% if matchdone == None %}
+<div>
+{% if current.ability1 %}<input type="submit" name="ability1" value="{{ current.ability1 }}"/>{% endif %}
+
+{% if current.ability2 %}<input type="submit" name="ability2" value="{{ current.ability2 }}"/>{% endif %}
+
+{% if current.ability3 %}<input type="submit" name="ability3" value="{{ current.ability3 }}"/>{% endif %}
+</div><br>
+{% endif %}
+
+{% if matchdone == 'Victory' %}
+<p>You won! Each member of your combat team earned {{ earned }} Evolution Points! <a href="{% url 'creatures:index' %}">Return to your stable.</a></p>
+{% endif %}
+
+{% if matchdone == 'Defeat' %}
+<p>You lost. <a href="{% url 'creatures:index' %}">Return to your stable.</a></p>
+{% endif %}
+
+</div>
+
+<div style="width: 10%; float: left; text-align: center;">
+-vs-
+</div>
+
+<div style="float: left;">
+<strong>{{ enemy.name }}</strong> ({{ enemy.health_left }}/{{ enemy.health }} HP)<br>
+Your CPU-controlled opponent.
+</div>
+
+
+{% if result %}
+<div style="width: 90%; height: auto; margin-top: 30px; border: 1px solid gray; float: left;">
+<div style="width: 100%; border-bottom: 1px solid gray; text-align: center;">
+Combat Log (last round)
+</div>
+<p>{{ result.0 | safe }}</p>
+<p>{{ result.1 | safe }}</p>
+</div>
+{% endif %}
+
+
+{% endblock %}

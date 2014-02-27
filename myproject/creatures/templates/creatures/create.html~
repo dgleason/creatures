@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if error_message %}<p>{{ error_message }}</p>{% endif %}
+    <h1>{{ user }}'s New Creature:</h1>
+    <form action="{% url 'creatures:make' %}" method="post">
+    {% csrf_token %}
+
+    <input type="text" name="name" id="name" value="" />
+    <br><label for="name">Name</label><br>
+
+    <p><strong>Base Form:</strong></p>
+    <input type="radio" name="body" id="body1" value="rabbit" />
+    <label for="body1">Rabbit (+1 Dodge)</label><br>
+    <input type="radio" name="body" id="body2" value="lizard" />
+    <label for="body2">Lizard - (+1 Armor)</label><br>
+    <input type="radio" name="body" id="body3" value="scorpion" />
+    <label for="body3">Scorpion - (+1 Resist. Primary attack does poison damage.)</label><br>
+
+
+    <br /><input type="submit" value="Create Creature" />
+    </form>
+    
+    
+
+{% endblock %}
